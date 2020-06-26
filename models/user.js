@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema({
         required: true
     },
 
-    hashedPassword: {
+    password: {
         type: String,
         required: true
     },
@@ -29,24 +29,6 @@ const userSchema = new mongoose.Schema({
     
 })
 
-userSchema.pre('save', async function(next) {
-    let user = this;
-    if (!user.isModified('hashedPassword')) return next()
-    
-    try {
-        user.password = await bcrypt.hash(user.password, 10)
-        next()
-    } catch (error) {
-        next(error)
-    }
-
-})
-
-userSchema.methods = {
-    comparePasswords: async function validatePassword(data) {
-        return bcrypt.compare(data, this.password);
-    }
-}
 
 
-module.exports = mongoose.Model("User", userSchema)
+module.exports = mongoose.model("User", userSchema)
