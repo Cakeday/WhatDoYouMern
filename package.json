@@ -19,6 +19,8 @@
   },
   "homepage": "https://github.com/Cakeday/WhatDoYouMern#readme",
   "dependencies": {
-    "express-validator": "^5.3.1"
+    "bcrypt": "^5.0.0",
+    "express-validator": "^5.3.1",
+    "uuidv1": "^1.6.14"
   }
 }
