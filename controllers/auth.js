@@ -19,20 +19,29 @@ module.exports = {
     },
 
     signin: async (req, res, next) => {
-        const { _id, name, email, password } = req.body
+        const { email, password } = req.body
         try {
             const user = await User.findOne({ email })
-            if (!user) next(new Error("That email doesn't exist in our database. Please try again or sign up."))
-            const checkPw = await comparePasswords(password, user.hashedPassword)
-            if (!checkPw) next(new Error("That password doesn't exist"))
+            if (!user) return res.status(401).json({error: "That email doesnt exist in our database. Please try again or sign up."})
+            const checkPw = await comparePasswords(password, user.password)
+            if (!checkPw) return res.status(401).json({error: "That password doesn't exist"})
 
+            const token = jwt.sign({_id: user._id}, process.env.JWT_SECRET)
+            res.cookie("t", token, {expire: new Date() + 9999})
+
+            const { _id, name } = user
+
+            return res.json({token, user: {_id, email, name}})
             
         } catch (error) {
             res.status(401).json({error})
             next(error)
         }
-        
+    },
 
+    signout: (req, res) => {
+        res.clearCookie("t")
+        return res.json({message: "Signout success"})
     },
 
     getAllUsers: async (req, res, next) => {

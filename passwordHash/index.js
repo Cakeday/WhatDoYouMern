@@ -13,8 +13,6 @@ module.exports = {
     },
 
     comparePasswords: async (password, hashedPassword) => {
-        const potentialMatch = await bcrypt.compare(password, hashedPassword)
-        if (!potentialMatch) throw new Error("Incorrect password")
-        return potentialMatch
+        return await bcrypt.compare(password, hashedPassword)
     }
 }
