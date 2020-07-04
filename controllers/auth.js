@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken')
 require('dotenv').config()
 const User = require('../models/user')
 const { comparePasswords } = require('../passwordHash/')
+const expressJwt = require('express-jwt')
 
 module.exports = {
     signup: async (req, res, next) => {
@@ -42,15 +43,11 @@ module.exports = {
     signout: (req, res) => {
         res.clearCookie("t")
         return res.json({message: "Signout success"})
-    },
-
-    getAllUsers: async (req, res, next) => {
-        try {
-            const allUsers = await User.find()
-            res.json(allUsers)
-        } catch (error) {
-            res.status('401').json({error: "User does not exist"})
-            next(error)
-        }
     }
 }
+
+
+module.exports.requireSignIn = expressJwt({
+    secret: process.env.JWT_SECRET,
+    userProperty: "auth"
+})

@@ -1,5 +1,6 @@
 const Post = require('../models/post')
 
+
 module.exports = {
 
     getPosts: (req, res) => {
