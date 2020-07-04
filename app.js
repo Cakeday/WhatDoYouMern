@@ -5,6 +5,7 @@ const mongoose = require('mongoose')
 const expressValidator = require('express-validator')
 const dotenv = require('dotenv')
 const cookieParser = require('cookie-parser')
+const multer = require('multer')
 dotenv.config()
 
 mongoose.connect(
@@ -16,6 +17,34 @@ mongoose.connection.on('error', (err) => {
     console.log(`DB connection error: ${err.message}`)
 });
 
+const myFileStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        console.log("destination() func got invoked")
+        cb(null,"./imageFolder")
+    }, 
+    
+    filename: (req, file, cb) => {
+        console.log("filename() func got invoked")
+        cb(null, new Date().toISOString().replace(/:/g, '-')+"_"+file.originalname)
+    } 
+})
+
+const myFileFilter= (req, file, cb) => {
+
+    if ( file.mimetype === "image/jpeg" || file.mimetype === "image/jpg" || file.mimetype === "image/png") {
+        console.log("valid image uploaded successfully")
+        cb(null, true)
+    } 
+    else {
+        console.log("invalid image uploaded ! Not accepted")
+        cb(null, false) 
+    }
+  } //end of 
+
+
+
+
+
 const postRoutes = require('./routes/post')
 const authRoutes = require('./routes/auth')
 const userRoutes = require('./routes/user')
@@ -24,6 +53,7 @@ app.use(morgan('dev'))
 app.use(express.json())
 app.use(cookieParser())
 app.use(expressValidator())
+app.use(multer({storage: myFileStorage , fileFilter: myFileFilter }).single('image'))
 
 app.use('/', postRoutes)
 app.use('/', authRoutes)

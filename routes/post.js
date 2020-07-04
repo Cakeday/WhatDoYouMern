@@ -7,7 +7,7 @@ const { userById } = require('../controllers/user')
 const router = express.Router();
 
 router.get('/', getPosts);
-router.post('/post', requireSignIn, createPostValidator, createPost);
+router.post('/post/new/:userId', requireSignIn, createPostValidator, createPost);
 
 // Any route containing a user id will be processed by this middleware
 router.param("userId", userById)
