@@ -1,0 +1,12 @@
+{
+    "/": "api docs",
+    "/signup": "sign up",
+    "/signin": "sign in",
+    "/signout": "sign out",
+    "/users": "get all users",
+    "/users/:userId": "get/update/delete user",
+    "/posts": "get all posts",
+    "/post/new/:postId": "create new post",
+    "/post/by/:postId": "get user's post",
+    "/post/:postId": "update/delete post"
+}

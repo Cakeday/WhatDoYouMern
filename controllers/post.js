@@ -1,11 +1,12 @@
 const Post = require('../models/post')
 const fs = require('fs')
+const _ = require('lodash')
 
 
 module.exports = {
 
     getPosts: (req, res) => {
-        Post.find().populate("postedBy", "_id name")
+        Post.find().populate("postedBy")
             .then(posts => res.json(posts))
             .catch(err => console.log(err))
     },
@@ -41,7 +42,16 @@ module.exports = {
     },
 
     isPoster: (req, res, next) => {
-        let isPoster = req.auth && req.post && req.post.postedBy._id === req.auth._id
+        let isPoster = req.auth && req.post && req.post.postedBy._id == req.auth._id
+        
+        console.log("**********************************************")
+        console.log(isPoster)
+        console.log("**********************************************")
+        console.log(req.auth)
+        console.log("**********************************************")
+        console.log(req.post)
+        console.log("**********************************************")
+
         if (!isPoster) {
             return res.status(403).json({
                 error: "User is not authorized"
@@ -53,9 +63,33 @@ module.exports = {
 
     deletePost: (req, res) => {
         let post = req.post
+        
         Post.deleteOne({_id: post._id})
-        .then(data => res.json({message: "Post deleted successfully"}))
+        .then(data => {
+            if (post.photo) {
+                fs.unlink(post.photo.data, err => {
+                    if (err) {
+                        return res.json(err)
+                    }
+                    console.log('Photo was deleted')
+                    res.json({message: "Post deleted successfully"})
+                })
+            }
+        })
         .catch(err => res.status(400).json(err))
+    },
+
+
+    updatePost: (req, res, next) => {
+        let post = req.post
+        post = _.extend(post, req.body)
+        post.updated = Date.now()
+        post.save(err => {
+            if (err) {
+                return res.json(400).json({error: err})
+            }
+            res.json(post)
+        })
     }
 
 
