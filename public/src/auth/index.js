@@ -1,5 +1,7 @@
 export const signup = user => {
-    return fetch("http://localhost:8000/signup", {
+    console.log("made it here")
+    console.log(process.env)
+    return fetch(`${process.env.REACT_APP_API_URL}/signup`, {
        method: "POST",
        headers: {
            Accept: "application/json",
@@ -8,13 +10,14 @@ export const signup = user => {
        body: JSON.stringify(user)
    })
    .then(res => {
+       console.log("inside of the first .then " + res)
        return res.json()
    })
    .catch(err => console.log(err))
 }
 
 export const signin = user => {
-    return fetch("http://localhost:8000/signin", {
+    return fetch(`${process.env.REACT_APP_API_URL}/signin`, {
        method: "POST",
        headers: {
            Accept: "application/json",
@@ -25,7 +28,7 @@ export const signin = user => {
    .then(res => {
        return res.json()
    })
-   .catch(err => console.log(err))
+   .catch(err => console.log("here is the error: " + err))
 }
 
 export const authenticate = (jwt, next) => {
@@ -38,7 +41,7 @@ export const authenticate = (jwt, next) => {
 export const signout = (next) => {
     if (typeof window !== undefined) localStorage.removeItem("jwt")
     next()
-    return fetch("http://localhost:8000/signout", {
+    return fetch(`${process.env.REACT_APP_API_URL}/signout`, {
         method: "GET"
     })
     .then(res => {

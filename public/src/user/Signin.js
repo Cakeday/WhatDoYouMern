@@ -28,7 +28,6 @@ class Signin extends Component {
         this.setState({loading: true})
         const { email, password } = this.state
         const user = { email, password }
-        console.log(user)
 
         signin(user)
         .then(data => {

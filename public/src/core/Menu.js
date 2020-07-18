@@ -29,10 +29,11 @@ const Menu = ({history}) => {
                 {isAuthenticated() && (
                     <>
                         <li className="nav-item">
+                            {/* eslint-disable-next-line */}
                             <a className="nav-link" onClick={() => signout(() => history.push('/'))} style={isActive(history, "/signout"), {cursor: "pointer", color: "#ffffff"}}>Sign out</a>
                         </li>
                         <li className="nav-item">
-                            <Link className="nav-link" to={`user/${isAuthenticated().user._id}`} style={{color: "#ffffff"}}>{`${isAuthenticated().user.name}'s profile`}</Link>
+                            <Link className="nav-link" to={`user/${isAuthenticated().user._id}`} style={isActive(history, "/signout"), {cursor: "pointer", color: "#ffffff"}}>{`${isAuthenticated().user.name}'s profile`}</Link>
                         </li>
                     </>
                 )}
