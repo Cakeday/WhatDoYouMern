@@ -27,7 +27,7 @@ class Users extends Component {
         <div className="row">
             {users.map((user, i) => (
                 <div key={i} className="card col-md-4">
-                    <img className="card-img-top" src={DefaultProfile} alt="Card image cap" style={{objectFit: "cover"}} />
+                    <img className="card-img-top" src={DefaultProfile} alt="Profile card" style={{objectFit: "cover"}} />
                     <div className="card-body">
                         <h5 className="card-title">{user.name}</h5>
                         <p className="card-text">{user.email}</p>

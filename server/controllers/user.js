@@ -16,7 +16,7 @@ module.exports.userById = (req, res, next, id) => {
 
 module.exports.getAllUsers = async (req, res, next) => {
     try {
-        const allUsers = await User.find().select("name email updated created")
+        const allUsers = await User.find().select("name email updated created password")
         res.json(allUsers)
     } catch (error) {
         res.status('401').json({error: "User does not exist"})
