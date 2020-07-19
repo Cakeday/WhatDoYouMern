@@ -7,15 +7,22 @@ const isActive = (history, path) => {
 }
 
 
+
 const Menu = ({history}) => {
+    
+    const isAuth = isAuthenticated()
+
     return (
         <div>
             <ul className="nav nav-tabs bg-primary">
                 <li className="nav-item">
                     <Link className="nav-link" style={isActive(history, "/")} to="/">Home</Link>
                 </li>
+                <li className="nav-item">
+                    <Link className="nav-link" style={isActive(history, "/users")} to="/users">Users</Link>
+                </li>
 
-                {!isAuthenticated() && (
+                {!isAuth && (
                     <>
                         <li className="nav-item">
                             <Link className="nav-link" style={isActive(history, "/signin")} to="/signin">Sign in</Link>
@@ -26,14 +33,14 @@ const Menu = ({history}) => {
                     </>
                 )}
 
-                {isAuthenticated() && (
+                {isAuth && (
                     <>
                         <li className="nav-item">
                             {/* eslint-disable-next-line */}
                             <a className="nav-link" onClick={() => signout(() => history.push('/'))} style={isActive(history, "/signout"), {cursor: "pointer", color: "#ffffff"}}>Sign out</a>
                         </li>
                         <li className="nav-item">
-                            <Link className="nav-link" to={`user/${isAuthenticated().user._id}`} style={isActive(history, "/signout"), {cursor: "pointer", color: "#ffffff"}}>{`${isAuthenticated().user.name}'s profile`}</Link>
+                            <Link className="nav-link" onClick={() => history.push(`/user/${isAuth.user._id}`)} to={`/user/${isAuth.user._id}`} style={isActive(history, `/user/${isAuthenticated().user._id}`)}>{`${isAuthenticated().user.name}'s profile`}</Link>
                         </li>
                     </>
                 )}

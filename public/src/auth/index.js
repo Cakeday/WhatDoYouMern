@@ -1,6 +1,4 @@
 export const signup = user => {
-    console.log("made it here")
-    console.log(process.env)
     return fetch(`${process.env.REACT_APP_API_URL}/signup`, {
        method: "POST",
        headers: {
@@ -10,7 +8,6 @@ export const signup = user => {
        body: JSON.stringify(user)
    })
    .then(res => {
-       console.log("inside of the first .then " + res)
        return res.json()
    })
    .catch(err => console.log(err))
@@ -45,7 +42,6 @@ export const signout = (next) => {
         method: "GET"
     })
     .then(res => {
-        console.log("signout", res)
         return res.json()
     })
     .catch(err => console.log(err))
