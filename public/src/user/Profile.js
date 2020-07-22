@@ -7,11 +7,13 @@ import DeleteUser from './DeleteUser';
 
 
 
+
 class Profile extends Component {
     constructor(props) {
         super(props);
         this.state = {
             user: "",
+            photoUrl: "",
             redirectToSignin: false
         };
     }
@@ -25,7 +27,9 @@ class Profile extends Component {
             if (data.error) {
                 this.setState({redirectToSignin: true})
             } else {
-                console.log(data)
+                if (data.photo) {
+                    this.setState({photoUrl: data.photo.data})
+                }
                 this.setState({user: data})
             }
         })
@@ -41,10 +45,10 @@ class Profile extends Component {
     
     
     render() {
-        const { redirectToSignin, user } = this.state
+        const { redirectToSignin, user, photoUrl } = this.state
         if (redirectToSignin) return <Redirect to="/signin" />
 
-        console.log(user)
+        const finalPhotoUrl = user.photo ? `${process.env.REACT_APP_API_URL}/${photoUrl}?${new Date().getTime()}` : DefaultProfile
 
         return (
             <div className="container">
@@ -52,7 +56,12 @@ class Profile extends Component {
 
                 <div className="row">
                     <div className="col-md-6">
-                        <img className="card-img-top" src={DefaultProfile} alt="Profile card" style={{objectFit: "cover"}} />
+                        <img 
+                            style={{height: '200px', width: 'auto'}}
+                            src={finalPhotoUrl} 
+                            alt={user.name}
+                            className="img-thumbnail"
+                        /> 
                     </div>
                     <div className="col-md-6">
                         <div className="lead mt-2">
@@ -67,6 +76,11 @@ class Profile extends Component {
                                     <DeleteUser userId={user._id} />
                                 </div>
                             )}
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-md-12 my-5">
+                        <p className="lead">{user.about}</p>
                     </div>
                 </div>
             </div>

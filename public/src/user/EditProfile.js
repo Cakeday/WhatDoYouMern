@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { isAuthenticated } from '../auth';
 import { read, update } from './apiUser'
 import { Redirect } from 'react-router-dom';
+import DefaultProfile from '../images/defaultProfile.jpg';
 
 
 class EditProfile extends Component {
@@ -13,8 +14,12 @@ class EditProfile extends Component {
             name: "",
             email: "",
             password: "",
+            about: "",
+            fileSize: 0,
+            photoUrl: "",
             redirectToProfile: false,
-            error: ""
+            error: "",
+            loading: false
         };
     }
 
@@ -26,23 +31,31 @@ class EditProfile extends Component {
             if (data.error) {
                 this.setState({redirectToSignin: true})
             } else {
-                this.setState({id: data._id, name: data.name, email: data.email, error: ""})
+                if (data.photo) {
+                    this.setState({photoUrl: data.photo.data})
+                }
+                this.setState({id: data._id, name: data.name, email: data.email, about: data.about, error: ""})
             }
         })
     }
 
     componentDidMount() {
+        this.userData = new FormData()
         this.init(this.props.match.params.userId)
     }
 
     isValid = () => {
-        const {name, email, password} = this.state
+        const { name, email, password, fileSize } = this.state
 
+        if (fileSize > 100000) {
+            this.setState({error: "Filesize should be less than 1mb"})
+            return false
+        }
         if (name.length === 0) {
             this.setState({error: "Name is required"})
             return false
         }
-        if (!/^\w+([\.-]?\w+)*@\w+([\.-]?w+)*(\.\w{2,3})+$/.test(email)) {
+        if (!/^\w+([.-]?\w+)*@\w+([.-]?w+)*(\.\w{2,3})+$/.test(email)) {
             this.setState({error: "A valid email is required"})
             return false
         }
@@ -54,22 +67,28 @@ class EditProfile extends Component {
     }
 
     handleChange = (name) => e => {
-        this.setState({[name]: e.target.value})
+        this.setState({error: ""})
+        const value = name === "image" ? e.target.files[0] : e.target.value
+        const fileSize = name === "image" ? e.target.files[0].size : 0
+        this.userData.set(name, value)
+        this.setState({[name]: value, fileSize})
     }
 
     clickSubmit = e => {
         e.preventDefault()
+        this.setState({loading: true})
 
+        const { name, email, password } = this.state
+
+        this.userData.set("name", name)
+        this.userData.set("email", email)
+        this.userData.set("password", password)
+        
         if (this.isValid()) {
-            let { name, email, password } = this.state
-    
-            const user = {name, email, password}
-            
-            // console.log(user)
             const userId = this.props.match.params.userId
             const token = isAuthenticated().token
     
-            update(userId, token, user)
+            update(userId, token, this.userData)
             .then(data => {
                 console.log(data)
                 if (data.error) this.setState({error: data.error})
@@ -83,8 +102,17 @@ class EditProfile extends Component {
     }
 
 
-    signupForm = (name, email, password) => (
+    editForm = (name, email, password, about) => (
         <form>
+            <div className="form-group">
+                <label className="text-muted">Profile Photo</label>
+                <input 
+                    onChange={this.handleChange("image")} 
+                    type="file" 
+                    accept="image/*"
+                    className="form-control"
+                />
+            </div>
             <div className="form-group">
                 <label className="text-muted">Name</label>
                 <input 
@@ -92,6 +120,15 @@ class EditProfile extends Component {
                     type="text" 
                     className="form-control"
                     value={name} 
+                />
+            </div>
+            <div className="form-group">
+                <label className="text-muted">About</label>
+                <textarea 
+                    onChange={this.handleChange("about")} 
+                    type="text" 
+                    className="form-control"
+                    value={about} 
                 />
             </div>
             <div className="form-group">
@@ -123,21 +160,34 @@ class EditProfile extends Component {
 
 
     render() {
-        const { id, name, email, password, redirectToProfile, error } = this.state
+        const { id, name, email, password, about, photoUrl, redirectToProfile, error, loading } = this.state
 
         if (redirectToProfile) {
             return <Redirect to={`/user/${id}`} />
         }
 
+        const finalPhotoUrl = id ? `${process.env.REACT_APP_API_URL}/${photoUrl}?${new Date().getTime()}` : DefaultProfile
 
         return (
             <div className="container">
+            
+                {loading ? <div className="jumbotron text-center">
+                    <h2>Loading...</h2>
+                </div> : ""}
+
                 <h2 className="my-5">Edit Profile</h2>
                 <div className="alert alert-danger" style={{ display: error ? "" : "none" }}>
                     {error}
                 </div>
 
-                {this.signupForm(name, email, password)}
+                <img 
+                    style={{height: '200px', width: 'auto'}}
+                    src={finalPhotoUrl} 
+                    alt={name}
+                    className="img-thumbnail"
+                />
+
+                {this.editForm(name, email, password, about)}
             </div>
         );
     }

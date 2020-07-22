@@ -15,6 +15,16 @@ const userSchema = new mongoose.Schema({
         required: true
     },
 
+    photo: {
+        data: String,
+        contentType: String
+    },
+
+    about: {
+        type: String,
+        trim: true
+    },
+
     password: {
         type: String,
         required: true

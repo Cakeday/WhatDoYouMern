@@ -1,5 +1,7 @@
 const _ = require('lodash')
 const User = require('../models/user')
+const fs = require('fs')
+const path = require('path')
 
 module.exports.userById = (req, res, next, id) => {
     User.findById(id).exec((err, user) => {
@@ -9,6 +11,7 @@ module.exports.userById = (req, res, next, id) => {
             })
         }
         req.profile = user
+        console.log(user)
         next()
     })
     
@@ -16,7 +19,7 @@ module.exports.userById = (req, res, next, id) => {
 
 module.exports.getAllUsers = async (req, res, next) => {
     try {
-        const allUsers = await User.find().select("name email updated created password")
+        const allUsers = await User.find()
         res.json(allUsers)
     } catch (error) {
         res.status('401').json({error: "User does not exist"})
@@ -38,6 +41,14 @@ module.exports.updateUser = (req, res, next) => {
     let user = req.profile
     user = _.extend(user, req.body) // extend mutates the source object
     user.updated = Date.now()
+    if (req.file) {
+        console.log("****************************************************************************************")
+        console.log("****************************************************************************************")
+        console.log("****************************************************************************************")
+        console.log(req.file)
+        user.photo.data = req.file.filename
+        user.photo.contentType = req.file.mimetype
+    }
     user.save((err) => {
         if (err) {
             return res.status(400).json({
@@ -47,6 +58,21 @@ module.exports.updateUser = (req, res, next) => {
         user.password = undefined
         res.json({user})
     })
+}
+
+module.exports.userPhoto = async (req, res, next) => {
+    try {
+        if (req.profile.photo.data) {
+            console.log("made it here....................")
+
+            res.set("Content-Type", req.profile.photo.contentType)
+            console.log()
+            return res.send(req.profile.photo.data)
+        }
+    } catch (error) {
+        console.log(error)
+        next(error)
+    }
 }
 
 module.exports.deleteUser = (req, res, next) => {

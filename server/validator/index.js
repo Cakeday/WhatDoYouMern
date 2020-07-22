@@ -63,6 +63,7 @@ exports.userSignupValidator = (req, res, next) => {
 }
 
 exports.userUpdateValidator = (req, res, next) => {
+    
     // check if name isn't null and between 4-10 chars
     req.check("name", "Name is required").notEmpty()
 
