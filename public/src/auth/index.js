@@ -6,11 +6,11 @@ export const signup = user => {
            "Content-Type": "application/json"
        },
        body: JSON.stringify(user)
-   })
-   .then(res => {
-       return res.json()
-   })
-   .catch(err => console.log(err))
+    })
+    .then(res => {
+        return res.json()
+    })
+    .catch(err => console.log(err))
 }
 
 export const signin = user => {
@@ -22,10 +22,10 @@ export const signin = user => {
        },
        body: JSON.stringify(user)
    })
-   .then(res => {
-       return res.json()
-   })
-   .catch(err => console.log("here is the error: " + err))
+    .then(res => {
+        return res.json()
+    })
+    .catch(err => console.log("here is the error: " + err))
 }
 
 export const authenticate = (jwt, next) => {

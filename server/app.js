@@ -72,7 +72,6 @@ app.use(expressValidator())
 app.use(cors())
 
 const dir = path.join(__dirname + '/imageFolder')
-console.log(dir)
 app.use(express.static(dir))
 
 app.use('/', postRoutes)

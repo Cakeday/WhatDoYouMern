@@ -36,11 +36,17 @@ const Menu = ({history}) => {
                 {isAuth && (
                     <>
                         <li className="nav-item">
-                            {/* eslint-disable-next-line */}
-                            <a className="nav-link" onClick={() => signout(() => history.push('/'))} style={isActive(history, "/signout"), {cursor: "pointer", color: "#ffffff"}}>Sign out</a>
+                            <Link className="nav-link" onClick={() => history.push(`/user/${isAuth.user._id}`)} to={'/findpeople'} style={isActive(history, "/findpeople")}>Find People</Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link className="nav-link" onClick={() => history.push(`/create/post`)} to={'/create/post'} style={isActive(history, "/create/post")}>Create Post</Link>
                         </li>
                         <li className="nav-item">
                             <Link className="nav-link" onClick={() => history.push(`/user/${isAuth.user._id}`)} to={`/user/${isAuth.user._id}`} style={isActive(history, `/user/${isAuthenticated().user._id}`)}>{`${isAuthenticated().user.name}'s profile`}</Link>
+                        </li>
+                        <li className="nav-item">
+                            {/* eslint-disable-next-line */}
+                            <a className="nav-link" onClick={() => signout(() => history.push('/'))} style={isActive(history, "/signout"), {cursor: "pointer", color: "#ffffff"}}>Sign out</a>
                         </li>
                     </>
                 )}

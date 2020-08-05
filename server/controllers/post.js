@@ -6,15 +6,20 @@ const _ = require('lodash')
 module.exports = {
 
     getPosts: (req, res) => {
-        Post.find().populate("postedBy")
+        Post.find()
+        .populate("postedBy", "_id name")
+        .select("_id title body created photo")
+        .sort({created: -1})
+
             .then(posts => res.json(posts))
             .catch(err => console.log(err))
     },
 
     createPost: (req, res, next) => {
+        console.log("did I make it to here?")
         const post = new Post(req.body)
         if (req.file) {
-            post.photo.data = req.file.path
+            post.photo.data = req.file.filename
             post.photo.contentType = req.file.mimetype
         }
         post.postedBy = req.profile

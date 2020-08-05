@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { isAuthenticated } from '../auth';
-import { read, update } from './apiUser'
+import { read, update, updateUser } from './apiUser'
 import { Redirect } from 'react-router-dom';
 import DefaultProfile from '../images/defaultProfile.jpg';
 
@@ -48,19 +48,19 @@ class EditProfile extends Component {
         const { name, email, password, fileSize } = this.state
 
         if (fileSize > 100000) {
-            this.setState({error: "Filesize should be less than 1mb"})
+            this.setState({error: "Filesize should be less than 1mb", loading: false})
             return false
         }
         if (name.length === 0) {
-            this.setState({error: "Name is required"})
+            this.setState({error: "Name is required", loading: false})
             return false
         }
         if (!/^\w+([.-]?\w+)*@\w+([.-]?w+)*(\.\w{2,3})+$/.test(email)) {
-            this.setState({error: "A valid email is required"})
+            this.setState({error: "A valid email is required", loading: false})
             return false
         }
         if (password.length >= 1 && password.length < 6) {
-            this.setState({error: "Password must be at least 6 characters long"})
+            this.setState({error: "Password must be at least 6 characters long", loading: false})
             return false
         }
         return true
@@ -90,11 +90,12 @@ class EditProfile extends Component {
     
             update(userId, token, this.userData)
             .then(data => {
-                console.log(data)
                 if (data.error) this.setState({error: data.error})
-                else this.setState({
-                    redirectToProfile: true
-                })
+                else {
+                    updateUser(data, () => {
+                        this.setState({redirectToProfile: true})
+                    })
+                }
             })
         }
 

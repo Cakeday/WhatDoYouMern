@@ -4,7 +4,12 @@ const fs = require('fs')
 const path = require('path')
 
 module.exports.userById = (req, res, next, id) => {
-    User.findById(id).exec((err, user) => {
+    console.log(id)
+    User.findById(id)
+    .populate('following', '_id name photo')
+    .populate('followers', '_id name photo')
+    .exec((err, user) => {
+        console.log(user, err)
         if (err || !user) {
             return res.status(400).json({
                 error: "User Not found"
@@ -85,4 +90,54 @@ module.exports.deleteUser = (req, res, next) => {
         }
         return res.json({ message: "User deleted successfully" })
     })
+}
+
+module.exports.addFollowing = (req, res, next) => {
+
+    User.findByIdAndUpdate(req.body.userId, {$push: {following: req.body.followId}}, {new: true})
+    .then(data => {
+        next()
+    })
+    .catch(error => res.status(400).json(error))
+}
+
+module.exports.addFollower = (req, res) => {
+    User.findByIdAndUpdate(req.body.followId, {$push: {followers: req.body.userId}}, {new: true})
+    .populate('following', '_id name photo')
+    .populate('followers', '_id name photo')
+    .then(data => {
+        data.password = undefined
+        res.json(data)
+    })
+    .catch(error => res.status(400).json(error))
+}
+
+module.exports.removeFollowing = (req, res, next) => {
+    User.findByIdAndUpdate(req.body.userId, {$pull: {following: req.body.unfollowId}}, {new: true})
+    .then(data => {
+        next()
+    })
+    .catch(error => res.status(400).json(error))
+}
+
+module.exports.removeFollower = (req, res) => {
+    User.findByIdAndUpdate(req.body.unfollowId, {$pull: {followers: req.body.userId}})
+    .populate('following', '_id name photo')
+    .populate('followers', '_id name photo')
+    .then(data => {
+        data.password = undefined
+        res.json(data)
+    })
+    .catch(error => res.status(400).json(error))
+}
+
+module.exports.findPeople = (req, res) => {
+    let following = req.profile.following
+    following.push(req.profile._id)
+    User.find({_id: {$nin: following}})
+    .select('name')
+    .then(data => {
+        res.json(data)
+    })
+    .catch(error => res.status(400).json(error))
 }

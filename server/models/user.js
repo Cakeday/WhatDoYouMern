@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const uuidv1 = require('uuidv1')
 const bcrypt = require('bcrypt')
+const { ObjectId } = mongoose.Schema
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -29,6 +30,16 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+
+    following: [{
+        type: ObjectId,
+        ref: "User"
+    }],
+
+    followers: [{
+        type: ObjectId,
+        ref: "User"
+    }],
 
     created: {
         type: Date,
