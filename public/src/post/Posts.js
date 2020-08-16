@@ -12,7 +12,6 @@ class Posts extends Component {
     }
 
     getPotentialPhoto = (post) => {
-        console.log(post)
         const image = post.photo ? (
             <img 
                 src={`${process.env.REACT_APP_API_URL}/${post.photo.data}?${new Date().getTime()}`} 
@@ -33,18 +32,12 @@ class Posts extends Component {
 
     componentDidMount() {
         list().then(data => {
-            if (data.error) {
-                console.log(data.error)
-            }
-            else {
-                this.setState({posts: data})
-                console.log(data)
-            }
+            this.setState({posts: data})
+            console.log(data)
         })
     }
 
     renderPosts = (posts) => {
-        
         return (
             <div className="row">
                     {/* const photoUrl = user.photo ? `${process.env.REACT_APP_API_URL}/${user.photo.data}?${new Date().getTime()}` : `${DefaultProfile}` */}

@@ -95,6 +95,10 @@ module.exports = {
             }
             res.json(post)
         })
+    },
+
+    singlePost: (req, res) => {
+        return res.json(req.post)
     }
 
 
