@@ -17,7 +17,6 @@ export const list = () => {
     })
     .then(res => {return res.json()})
     .catch(err => console.log(err))
-
 }
 
 export const singlePost = (postId) => {
@@ -26,5 +25,15 @@ export const singlePost = (postId) => {
     })
     .then(res => {return res.json()})
     .catch(err => console.log(err))
+}
 
+export const listByUser = (userId, token) => {
+    return fetch(`${process.env.REACT_APP_API_URL}/posts/by/${userId}`, {
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    })
+    .then(res => {return res.json()})
+    .catch(err => console.log(err))
 }

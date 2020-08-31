@@ -5,7 +5,7 @@ import DefaultProfile from '../images/defaultProfile.jpg';
 
 class ProfileTabs extends Component {
     render() {
-        const { following, followers } = this.props
+        const { following, followers, posts } = this.props
         return (
             <div className="row">
                 <div className="col-md-4">
@@ -54,6 +54,16 @@ class ProfileTabs extends Component {
                 </div>
                 <div className="col-md-4">
                     <h3 className="text-primary">Posts</h3>
+                    <hr />
+                    {posts.map(post => {
+                        return (
+                            <div key={post._id}>
+                                <Link to={`/post/${post._id}`}>
+                                    <p className="lead">{post.title}</p>
+                                </Link>
+                            </div>
+                        )
+                    })}
                 </div>
             </div>
         );
