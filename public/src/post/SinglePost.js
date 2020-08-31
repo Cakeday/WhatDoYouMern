@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { singlePost } from './apiPost'
 import { Link } from 'react-router-dom'
 import DefaultPostPicture from '../images/defaultPostPicture.jpg';
+import { isAuthenticated } from '../auth'
 
 
 class SinglePost extends Component {
@@ -54,7 +55,16 @@ class SinglePost extends Component {
                 <p className="font-italic mark">
                     Posted by <Link to={posterId}>{posterName}</Link> on {new Date(post.created).toDateString()}
                 </p>
-                <Link to={'/'} className="btn btn-primary btn-raised btn-sm">Back to posts</Link>
+                <div className="d-inline-block">
+                    <Link to={'/'} className="btn btn-primary btn-raised btn-sm">Back to posts</Link>
+                    {isAuthenticated().user && 
+                            isAuthenticated().user._id === post.postedBy._id &&
+                                <>
+                                    <button className="btn btn-raised btn-success btn-sm mx-5">Edit Post</button>
+                                    <button className="btn btn-raised btn-danger btn-sm">Delete Post</button>
+                                </>
+                            }
+                </div>
             </div>
         )
     }
