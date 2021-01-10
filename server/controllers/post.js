@@ -38,7 +38,7 @@ module.exports = {
         
     postById: (req, res, next, id) => {
         Post.findById(id)
-            .populate("postedBy", "_id, name")
+            .populate("postedBy", "_id name")
             .then(post => {
                 req.post = post
                 next()
@@ -87,6 +87,10 @@ module.exports = {
 
     updatePost: (req, res, next) => {
         let post = req.post
+        if (req.file) {
+            post.photo.data = req.file.filename
+            post.photo.contentType = req.file.mimetype
+        }
         post = _.extend(post, req.body)
         post.updated = Date.now()
         post.save(err => {
@@ -98,7 +102,15 @@ module.exports = {
     },
 
     singlePost: (req, res) => {
-        return res.json(req.post)
+        Post.findById(req.post._id)
+        .populate("postedBy", "_id name")
+        .select("_id title body created photo")
+        .then(post => {
+            console.log(post)
+            return res.json(post)
+        })
+        .catch(err => res.status(400).json(err))
+        // return res.json(req.post)
     }
 
 

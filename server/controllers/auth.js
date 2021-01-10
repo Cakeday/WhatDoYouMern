@@ -26,7 +26,7 @@ module.exports = {
             console.log(user)
             if (!user) return res.status(401).json({error: "That email doesnt exist in our database. Please try again or sign up."})
             const checkPw = await comparePasswords(password, user.password)
-            if (!checkPw) return res.status(401).json({error: "That password doesn't exist"})
+            if (!checkPw) return res.status(401).json({error: "Incorrect password"})
 
             const token = jwt.sign({_id: user._id}, process.env.JWT_SECRET)
             res.cookie("t", token, {expire: new Date() + 9999})

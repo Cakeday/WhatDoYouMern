@@ -172,21 +172,22 @@ class EditProfile extends Component {
         return (
             <div className="container">
             
+                <h2 className="my-5">Edit Profile</h2>
+                
                 {loading ? <div className="jumbotron text-center">
                     <h2>Loading...</h2>
                 </div> : ""}
 
-                <h2 className="my-5">Edit Profile</h2>
                 <div className="alert alert-danger" style={{ display: error ? "" : "none" }}>
                     {error}
                 </div>
 
-                <img 
+                { photoUrl !== '' && <img 
                     style={{height: '200px', width: 'auto'}}
                     src={finalPhotoUrl} 
                     alt={name}
                     className="img-thumbnail"
-                />
+                />}
 
                 {this.editForm(name, email, password, about)}
             </div>

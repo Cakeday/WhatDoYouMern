@@ -37,3 +37,28 @@ export const listByUser = (userId, token) => {
     .then(res => {return res.json()})
     .catch(err => console.log(err))
 }
+
+export const remove = (postId, token) => {
+    return fetch(`${process.env.REACT_APP_API_URL}/post/${postId}`, {
+        method: "DELETE",
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+        }
+    })
+    .then(res => {return res.json()})
+    .catch(err => console.log(err))
+}
+
+export const update = (postId, token, post) => {
+    return fetch(`${process.env.REACT_APP_API_URL}/post/${postId}`, {
+        method: "PUT",
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        body: post
+    })
+    .then(res => {return res.json()})
+    .catch(err => console.log(err))
+}

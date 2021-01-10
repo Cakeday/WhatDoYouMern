@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { singlePost } from './apiPost'
-import { Link } from 'react-router-dom'
+import { singlePost, remove } from './apiPost'
+import { Link, Redirect } from 'react-router-dom'
 import DefaultPostPicture from '../images/defaultPostPicture.jpg';
 import { isAuthenticated } from '../auth'
 
@@ -10,10 +10,20 @@ class SinglePost extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            post: ""
+            post: "",
+            redirectToHome: false,
         }
     }
     
+    deletePost = () => {
+        console.log("deleting the post....")
+        const postId = this.props.match.params.postId
+        const token = isAuthenticated().token
+        remove(postId, token).then(data => {
+            if (data.error) console.log(data.error)
+            else this.setState({redirectToHome: true})
+        })
+    }
 
     componentDidMount = () => {
         const postId = this.props.match.params.postId
@@ -29,7 +39,7 @@ class SinglePost extends Component {
             <img 
                 src={`${process.env.REACT_APP_API_URL}/${post.photo.data}?${new Date().getTime()}`} 
                 alt={post.title}
-                style={{height: '50vh', width: 'auto', objectFit: 'cover'}}
+                style={{height: '50vh', width: '100%', objectFit: 'cover'}}
                 className="img-thumbnail"
             />
         ) : (
@@ -41,6 +51,13 @@ class SinglePost extends Component {
             />
         )
         return image
+    }
+
+    deleteConfirmation = () => {
+        let answer = window.confirm("Are you sure you want to delete your post?")
+        if (answer) {
+            this.deletePost()
+        }
     }
 
     renderPost = (post) => {
@@ -60,8 +77,8 @@ class SinglePost extends Component {
                     {isAuthenticated().user && 
                             isAuthenticated().user._id === post.postedBy._id &&
                                 <>
-                                    <button className="btn btn-raised btn-success btn-sm mx-5">Edit Post</button>
-                                    <button className="btn btn-raised btn-danger btn-sm">Delete Post</button>
+                                    <Link to={`/post/edit/${post._id}`} className="btn btn-warning btn-raised btn-sm mx-3">Update Post</Link>
+                                    <button onClick={this.deleteConfirmation} className="btn btn-raised btn-danger btn-sm">Delete Post</button>
                                 </>
                             }
                 </div>
@@ -71,6 +88,10 @@ class SinglePost extends Component {
 
     render() {
         const { post } = this.state;
+
+        if (this.state.redirectToHome) {
+            return <Redirect to={'/'} />
+        }
         return (
             <div className="container">
                 <h2 className="display-2 my-5">{post.title}</h2>

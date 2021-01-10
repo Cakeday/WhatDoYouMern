@@ -33,7 +33,7 @@ class NewPost extends Component {
             return false
         }
         if (title.length === 0 || body.length === 0) {
-            this.setState({error: "All fields is required", loading: false})
+            this.setState({error: "All fields are required", loading: false})
             return false
         }
         return true
