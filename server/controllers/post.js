@@ -16,7 +16,6 @@ module.exports = {
     },
 
     createPost: (req, res, next) => {
-        console.log("did I make it to here?")
         const post = new Post(req.body)
         if (req.file) {
             post.photo.data = req.file.filename
@@ -48,15 +47,6 @@ module.exports = {
 
     isPoster: (req, res, next) => {
         let isPoster = req.auth && req.post && req.post.postedBy._id == req.auth._id
-        
-        console.log("**********************************************")
-        console.log(isPoster)
-        console.log("**********************************************")
-        console.log(req.auth)
-        console.log("**********************************************")
-        console.log(req.post)
-        console.log("**********************************************")
-
         if (!isPoster) {
             return res.status(403).json({
                 error: "User is not authorized"
@@ -76,7 +66,6 @@ module.exports = {
                     if (err) {
                         return res.json(err)
                     }
-                    console.log('Photo was deleted')
                     res.json({message: "Post deleted successfully"})
                 })
             }
@@ -106,7 +95,6 @@ module.exports = {
         .populate("postedBy", "_id name")
         .select("_id title body created photo")
         .then(post => {
-            console.log(post)
             return res.json(post)
         })
         .catch(err => res.status(400).json(err))

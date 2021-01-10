@@ -33,7 +33,6 @@ class Posts extends Component {
     componentDidMount() {
         list().then(data => {
             this.setState({posts: data})
-            console.log(data)
         })
     }
 

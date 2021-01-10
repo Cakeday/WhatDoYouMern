@@ -16,7 +16,6 @@ class SinglePost extends Component {
     }
     
     deletePost = () => {
-        console.log("deleting the post....")
         const postId = this.props.match.params.postId
         const token = isAuthenticated().token
         remove(postId, token).then(data => {
@@ -28,13 +27,11 @@ class SinglePost extends Component {
     componentDidMount = () => {
         const postId = this.props.match.params.postId
         singlePost(postId).then(data => {
-            console.log(data)
             this.setState({post: data})
         })
     }
 
     getPotentialPhoto = (post) => {
-        console.log(post)
         const image = post.photo ? (
             <img 
                 src={`${process.env.REACT_APP_API_URL}/${post.photo.data}?${new Date().getTime()}`} 

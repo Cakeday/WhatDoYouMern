@@ -27,11 +27,9 @@ class Signup extends Component {
         e.preventDefault()
         const { name, email, password } = this.state
         const user = {name, email, password}
-        console.log(user)
 
         signup(user)
         .then(data => {
-            console.log(data)
             if (data.error) this.setState({error: data.error})
             else this.setState({
                 name: "",

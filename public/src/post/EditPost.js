@@ -25,7 +25,6 @@ class EditPost extends Component {
             if (data.error) {
                 this.setState({redirectToProfile: true})
             } else {
-                console.log(data)
                 if (data.photo) {
                     this.setState({photoUrl: data.photo.data})
                 }
@@ -78,8 +77,6 @@ class EditPost extends Component {
         if (this.isValid()) {
             const postId = this.state.id
             const token = isAuthenticated().token
-
-            console.log(this.postData)
 
             update(postId, token, this.postData)
             .then(data => {
@@ -135,7 +132,6 @@ class EditPost extends Component {
 
         const { id, title, body, redirectToProfile, photoUrl, loading, error } = this.state
 
-        console.log(photoUrl)
 
         const finalPhotoUrl = id ? `${process.env.REACT_APP_API_URL}/${photoUrl}?${new Date().getTime()}` : DefaultPostPicture
 

@@ -18,7 +18,6 @@ class Users extends Component {
             }
             else {
                 this.setState({users: data})
-                console.log(data)
             }
         })
     }

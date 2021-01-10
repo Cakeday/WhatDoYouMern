@@ -4,19 +4,16 @@ const fs = require('fs')
 const path = require('path')
 
 module.exports.userById = (req, res, next, id) => {
-    console.log(id)
     User.findById(id)
     .populate('following', '_id name photo')
     .populate('followers', '_id name photo')
     .exec((err, user) => {
-        console.log(user, err)
         if (err || !user) {
             return res.status(400).json({
                 error: "User Not found"
             })
         }
         req.profile = user
-        console.log(user)
         next()
     })
     
@@ -47,10 +44,6 @@ module.exports.updateUser = (req, res, next) => {
     user = _.extend(user, req.body) // extend mutates the source object
     user.updated = Date.now()
     if (req.file) {
-        console.log("****************************************************************************************")
-        console.log("****************************************************************************************")
-        console.log("****************************************************************************************")
-        console.log(req.file)
         user.photo.data = req.file.filename
         user.photo.contentType = req.file.mimetype
     }
@@ -68,10 +61,8 @@ module.exports.updateUser = (req, res, next) => {
 module.exports.userPhoto = async (req, res, next) => {
     try {
         if (req.profile.photo.data) {
-            console.log("made it here....................")
 
             res.set("Content-Type", req.profile.photo.contentType)
-            console.log()
             return res.send(req.profile.photo.data)
         }
     } catch (error) {
