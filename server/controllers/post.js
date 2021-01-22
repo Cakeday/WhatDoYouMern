@@ -8,7 +8,7 @@ module.exports = {
     getPosts: (req, res) => {
         Post.find()
         .populate("postedBy", "_id name")
-        .select("_id title body created photo")
+        .select("_id title body created photo likes")
         .sort({created: -1})
 
             .then(posts => res.json(posts))
@@ -30,6 +30,7 @@ module.exports = {
     postsByUser: (req, res) => {
         Post.find({postedBy: req.profile._id})
             .populate("postedBy", "_id name")
+            .select("_id title body created photo likes")
             .sort("created")
             .then(data => res.json(data))
             .catch(err => res.status(400).json(err))
@@ -38,6 +39,7 @@ module.exports = {
     postById: (req, res, next, id) => {
         Post.findById(id)
             .populate("postedBy", "_id name")
+            .select("_id title body created photo likes")
             .then(post => {
                 req.post = post
                 next()
@@ -93,13 +95,37 @@ module.exports = {
     singlePost: (req, res) => {
         Post.findById(req.post._id)
         .populate("postedBy", "_id name")
-        .select("_id title body created photo")
+        .select("_id title body created photo likes")
         .then(post => {
             return res.json(post)
         })
         .catch(err => res.status(400).json(err))
         // return res.json(req.post)
-    }
+    },
+
+
+    like: (req, res) => {
+        console.log(req.body)
+        Post.findByIdAndUpdate(req.body.postId, {$push: {likes: req.body.userId}}, {new: true})
+        .exec((err, data) => {
+            if (err) {
+                return res.status(400).json({error: err})
+            } else {
+                return res.json(data)
+            }
+        })
+    },
+
+    unlike: (req, res) => {
+        Post.findByIdAndUpdate(req.body.postId, {$pull: {likes: req.body.userId}}, {new: true})
+        .exec((err, data) => {
+            if (err) {
+                return res.status(400).json({error: err})
+            } else {
+                return res.json(data)
+            }
+        })
+    },
 
 
 

@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
-import { singlePost, remove } from './apiPost'
+import { singlePost, remove, like, unlike } from './apiPost'
 import { Link, Redirect } from 'react-router-dom'
 import DefaultPostPicture from '../images/defaultPostPicture.jpg';
 import { isAuthenticated } from '../auth'
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faThumbsUp } from '@fortawesome/free-solid-svg-icons'
 
 
 class SinglePost extends Component {
@@ -12,6 +15,9 @@ class SinglePost extends Component {
         this.state = {
             post: "",
             redirectToHome: false,
+            redirectToLogin: false,
+            like: false,
+            likes: 0
         }
     }
     
@@ -24,10 +30,38 @@ class SinglePost extends Component {
         })
     }
 
+    checkLikes = (likes) => {
+        const userId = isAuthenticated() && isAuthenticated().user._id
+        let match = likes.indexOf(userId) !== -1
+        return match
+    }
+
     componentDidMount = () => {
         const postId = this.props.match.params.postId
         singlePost(postId).then(data => {
-            this.setState({post: data})
+            const alreadyLiked = this.checkLikes(data.likes)
+            this.setState({post: data, likes: data.likes.length, like: alreadyLiked})
+        })
+    }
+
+    likeToggle = () => {
+        if (!isAuthenticated()) {
+            this.setState({redirectToLogin: true})
+            return false
+        }
+        const token = isAuthenticated().token
+        const userId = isAuthenticated().user._id
+        const postId = this.state.post._id
+        let callApi = this.state.like ? unlike : like
+        callApi(userId, token, postId).then(data => {
+            if (data.error) {
+                console.log(data.error)
+            } else {
+                this.setState({
+                    like: !this.state.like,
+                    likes: data.likes.length
+                })
+            }
         })
     }
 
@@ -60,11 +94,23 @@ class SinglePost extends Component {
     renderPost = (post) => {
         const posterId = post.postedBy ? `/user/${post.postedBy._id}` : ""
         const posterName = post.postedBy ? post.postedBy.name : "Unknown author"
+
+        const { like, likes } = this.state
+
+
         return (
             <div className="card-body">
                 {this.getPotentialPhoto(post)}
                 <h5 className="card-title">{post.title}</h5>
                 <p className="card-text">{post.body}</p>
+                {like ? (
+                    <h3 onClick={this.likeToggle}><FontAwesomeIcon icon={faThumbsUp} className="mx-2 text-success" />
+                    {likes} likes</h3>
+                ) : (
+                    <h3 onClick={this.likeToggle}><FontAwesomeIcon icon={faThumbsUp} className="mx-2" />
+                    {likes} likes</h3>
+                )}
+
                 <br />
                 <p className="font-italic mark">
                     Posted by <Link to={posterId}>{posterName}</Link> on {new Date(post.created).toDateString()}
@@ -84,11 +130,11 @@ class SinglePost extends Component {
     }
 
     render() {
-        const { post } = this.state;
+        const { post, redirectToHome, redirectToLogin } = this.state;
 
-        if (this.state.redirectToHome) {
-            return <Redirect to={'/'} />
-        }
+        if (redirectToHome) return <Redirect to={'/'} />
+        if (redirectToLogin) return <Redirect to={'/signin'} />
+
         return (
             <div className="container">
                 <h2 className="display-2 my-5">{post.title}</h2>

@@ -22,7 +22,9 @@ export const singlePost = (postId) => {
     return fetch(`${process.env.REACT_APP_API_URL}/post/${postId}`, {
         method: "GET",
     })
-    .then(res => {return res.json()})
+    .then(res => {
+        return res.json()
+    })
     .catch(err => console.log(err))
 }
 
@@ -61,3 +63,30 @@ export const update = (postId, token, post) => {
     .then(res => {return res.json()})
     .catch(err => console.log(err))
 }
+
+export const like = (userId, token, postId) => {
+    return fetch(`${process.env.REACT_APP_API_URL}/post/like`, {
+        method: "PUT",
+        headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({userId, postId})
+    })
+    .then(res => {return res.json()})
+    .catch(err => console.log(err))
+}
+
+export const unlike = (userId, token, postId) => {
+    return fetch(`${process.env.REACT_APP_API_URL}/post/unlike`, {
+        method: "PUT",
+        headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({userId, postId})
+    })
+    .then(res => {return res.json()})
+    .catch(err => console.log(err))
+}
+
