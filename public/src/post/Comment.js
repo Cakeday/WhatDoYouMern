@@ -55,6 +55,28 @@ class Comment extends Component {
         }
     }
 
+    deleteComment = (comment) => {
+        const userId = isAuthenticated().user._id
+        const token = isAuthenticated().token
+        const { postId } = this.props
+
+        uncomment(userId, token, postId, comment)
+        .then(data => {
+            if (data.error) {
+                console.log(data.error)
+            } else {
+                this.props.updateComments(data.comments)
+            }
+        })
+    }
+
+    deleteConfirmation = (comment) => {
+        let answer = window.confirm("Are you sure you want to delete your comment?")
+        if (answer) {
+            this.deleteComment(comment)
+        }
+    }
+
     render() {
         const { comments } = this.props
         const { error } = this.state
@@ -93,6 +115,14 @@ class Comment extends Component {
                                 <p className="lead">{comment.text}</p>
                                 <p className="font-italic mark">
                                     Posted by <Link to={`/user/${comment.postedBy._id}`}>{comment.postedBy.name}</Link> on {new Date(comment.created).toDateString()}
+
+
+                                    <span>
+                                        {isAuthenticated().user && 
+                                            isAuthenticated().user._id === comment.postedBy._id &&
+                                                <button onClick={() => this.deleteConfirmation(comment)} className="btn btn-danger float-right mr-1">Delete Comment</button>
+                                        }
+                                    </span>
                                 </p>
                                 <br />
                             </div>

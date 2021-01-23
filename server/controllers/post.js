@@ -152,7 +152,7 @@ module.exports = {
 
     uncomment: (req, res) => {
         let { _id } = req.body.comment
-        Post.findByIdAndUpdate(req.body.postId, {$pull: {comments: _id}}, {new: true})
+        Post.findByIdAndUpdate(req.body.postId, {$pull: {comments: {_id}}}, {new: true})
         .populate('comments.postedBy', '_id, name')
         .populate('postedBy', '_id name')
         .exec((err, data) => {
