@@ -3,6 +3,7 @@ import { singlePost, remove, like, unlike } from './apiPost'
 import { Link, Redirect } from 'react-router-dom'
 import DefaultPostPicture from '../images/defaultPostPicture.jpg';
 import { isAuthenticated } from '../auth'
+import Comment from './Comment'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faThumbsUp } from '@fortawesome/free-solid-svg-icons'
@@ -17,7 +18,8 @@ class SinglePost extends Component {
             redirectToHome: false,
             redirectToLogin: false,
             like: false,
-            likes: 0
+            likes: 0,
+            comments: []
         }
     }
     
@@ -40,8 +42,13 @@ class SinglePost extends Component {
         const postId = this.props.match.params.postId
         singlePost(postId).then(data => {
             const alreadyLiked = this.checkLikes(data.likes)
-            this.setState({post: data, likes: data.likes.length, like: alreadyLiked})
+            console.log(data)
+            this.setState({post: data, likes: data.likes.length, like: alreadyLiked, comments: data.comments})
         })
+    }
+
+    updateComments = comments => {
+        this.setState({ comments })
     }
 
     likeToggle = () => {
@@ -123,14 +130,15 @@ class SinglePost extends Component {
                                     <Link to={`/post/edit/${post._id}`} className="btn btn-warning btn-raised btn-sm mx-3">Update Post</Link>
                                     <button onClick={this.deleteConfirmation} className="btn btn-raised btn-danger btn-sm">Delete Post</button>
                                 </>
-                            }
+                    }
                 </div>
             </div>
         )
     }
 
     render() {
-        const { post, redirectToHome, redirectToLogin } = this.state;
+        const { post, redirectToHome, redirectToLogin, comments } = this.state;
+        console.log(comments)
 
         if (redirectToHome) return <Redirect to={'/'} />
         if (redirectToLogin) return <Redirect to={'/signin'} />
@@ -141,6 +149,9 @@ class SinglePost extends Component {
                 {!post ? <div className="jumbotron text-center">
                     <h2>Loading...</h2>
                 </div> : (this.renderPost(post))}
+
+                <Comment postId={post._id} comments={comments.reverse()} updateComments={this.updateComments} />
+
             </div>
         )
     }

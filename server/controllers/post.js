@@ -43,9 +43,10 @@ module.exports = {
             .populate("postedBy", "_id name")
             .populate("comments", "text createdBy")
             .populate("comments.postedBy", "_id name")
-            .select("_id title body created photo likes")
+            .select("_id title body created photo likes comments")
             .then(post => {
                 req.post = post
+                console.log(post)
                 next()
             })
             .catch(err => res.status(400).json(err))
@@ -99,7 +100,9 @@ module.exports = {
     singlePost: (req, res) => {
         Post.findById(req.post._id)
         .populate("postedBy", "_id name")
-        .select("_id title body created photo likes")
+        .populate("comments", "text createdBy")
+        .populate("comments.postedBy", "_id name")
+        .select("_id title body created photo likes comments")
         .then(post => {
             return res.json(post)
         })
