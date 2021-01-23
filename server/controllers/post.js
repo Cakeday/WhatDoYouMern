@@ -8,6 +8,8 @@ module.exports = {
     getPosts: (req, res) => {
         Post.find()
         .populate("postedBy", "_id name")
+        .populate("comments", "text createdBy")
+        .populate("comments.postedBy", "_id name")
         .select("_id title body created photo likes")
         .sort({created: -1})
 
@@ -39,6 +41,8 @@ module.exports = {
     postById: (req, res, next, id) => {
         Post.findById(id)
             .populate("postedBy", "_id name")
+            .populate("comments", "text createdBy")
+            .populate("comments.postedBy", "_id name")
             .select("_id title body created photo likes")
             .then(post => {
                 req.post = post
@@ -105,7 +109,6 @@ module.exports = {
 
 
     like: (req, res) => {
-        console.log(req.body)
         Post.findByIdAndUpdate(req.body.postId, {$push: {likes: req.body.userId}}, {new: true})
         .exec((err, data) => {
             if (err) {
@@ -127,6 +130,38 @@ module.exports = {
         })
     },
 
+
+    comment: (req, res) => {
+        let comment = req.body.comment
+        comment.postedBy = req.body.userId
+        Post.findByIdAndUpdate(req.body.postId, {$push: {comments: comment}}, {new: true})
+        .populate('comments.postedBy', '_id, name')
+        .populate('postedBy', '_id name')
+        .exec((err, data) => {
+            if (err) {
+                return res.status(400).json({error: err})
+            } else {
+                return res.json(data)
+            }
+        })
+    },
+
+
+    uncomment: (req, res) => {
+        let { _id } = req.body.comment
+        Post.findByIdAndUpdate(req.body.postId, {$pull: {comments: _id}}, {new: true})
+        .populate('comments.postedBy', '_id, name')
+        .populate('postedBy', '_id name')
+        .exec((err, data) => {
+            if (err) {
+                return res.status(400).json({error: err})
+            } else {
+                return res.json(data)
+            }
+        })
+    },
+
+  
 
 
 
