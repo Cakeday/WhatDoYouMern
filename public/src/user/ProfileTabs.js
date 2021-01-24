@@ -46,8 +46,8 @@ class ProfileTabs extends Component {
                                         src={`${finalPhotoUrl}?${new Date().getTime()}`} 
                                         alt={person.name}>
                                     </img>
+                                    <p className="lead">{person.name}</p>
                                 </Link>
-                                <p className="lead">{person.name}</p>
                             </div>
                         )
                     })}
