@@ -10,7 +10,6 @@ import { listByUser } from '../post/apiPost'
 
 
 
-
 class Profile extends Component {
     constructor(props) {
         super(props);
