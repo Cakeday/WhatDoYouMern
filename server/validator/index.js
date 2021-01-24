@@ -79,12 +79,12 @@ exports.userUpdateValidator = (req, res, next) => {
     if (req.body.password !== "") {
         req.check('password', "Password is required").notEmpty();
         req.check('password')
-        .isLength({
-            min: 6
-        })
-        .withMessage("ya password must contain at least 6 characters")
-        .matches(/\d/)
-        .withMessage("your password needs at least one number")
+            .isLength({
+                min: 6
+            })
+            .withMessage("ya password must contain at least 6 characters")
+            .matches(/\d/)
+            .withMessage("your password needs at least one number")
     } else {
         delete req.body.password
     }
@@ -103,3 +103,22 @@ exports.userUpdateValidator = (req, res, next) => {
     next();
 }
 
+exports.resetPasswordValidator = (req, res, next) => {
+    req.check("password", "Password is required").notEmpty();
+    req.check("password")
+        .isLength({ min: 6 })
+        .withMessage("Password must be at least 6 chars long")
+        .matches(/\d/)
+        .withMessage("must contain a number")
+        .withMessage("Password must contain a number");
+ 
+    // check for errors
+    const errors = req.validationErrors();
+    // show errors as they happen
+    if (errors) {
+        const firstError = errors.map(error => error.msg)[0];
+        return res.status(400).json({ error: firstError });
+    }
+    // proceed to next middleware or ...
+    next();
+}

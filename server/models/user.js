@@ -41,6 +41,11 @@ const userSchema = new mongoose.Schema({
         ref: "User"
     }],
 
+    resetPasswordLink: {
+        data: String,
+        default: ""
+    },
+
     created: {
         type: Date,
         default: Date.now()
