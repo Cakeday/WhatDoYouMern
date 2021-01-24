@@ -7,7 +7,9 @@ export const read = (userId, token) => {
             Authorization: `Bearer ${token}`
         }
     })
-    .then(res => {return res.json()})
+    .then(res => {
+        return res.json()
+    })
     .catch(err => console.log(err))
 }
 
