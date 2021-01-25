@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Redirect, Link } from 'react-router-dom';
 import { signin, authenticate } from '../auth';
+import GoogleOAuthLogin from './GoogleOAuthLogin'
 
 class Signin extends Component {
     constructor() {
@@ -92,6 +93,10 @@ class Signin extends Component {
                 </div> : ""}
 
                 {this.signinForm(email, password)}
+
+                <hr />
+                    <GoogleOAuthLogin />
+                <hr />
 
                 <p>
                     <Link to="/forgot-password" className="text-danger">
