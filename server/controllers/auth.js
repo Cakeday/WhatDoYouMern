@@ -158,5 +158,6 @@ module.exports = {
 
 module.exports.requireSignIn = expressJwt({
     secret: process.env.JWT_SECRET,
-    userProperty: "auth"
+    userProperty: "auth",
+    algorithms: ['HS256']
 })
