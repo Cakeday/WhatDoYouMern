@@ -126,7 +126,6 @@ module.exports.findPeople = (req, res) => {
     let following = req.profile.following
     following.push(req.profile._id)
     User.find({_id: {$nin: following}})
-    .select('name')
     .then(data => {
         res.json(data)
     })

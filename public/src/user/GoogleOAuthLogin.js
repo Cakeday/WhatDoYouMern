@@ -41,7 +41,7 @@ class GoogleOAuthLogin extends Component {
         return (
             <div className="container">
                 <GoogleLogin
-                    clientId={process.env.GOOGLE_OAUTH_CLIENT_ID}
+                    clientId={process.env.REACT_APP_GOOGLE_OAUTH_CLIENT_ID}
                     buttonText="Login with Google"
                     onSuccess={this.responseFromGoogle}
                     onFailure={this.responseFromGoogle}

@@ -57,7 +57,7 @@ class FindPeople extends Component {
                 return (
                     <div key={i} className="card col-md-4">
                         <img 
-                            style={{height: '200px', width: 'auto'}}
+                            style={{height: '200px', width: 'auto', objectFit: 'contain'}}
                             src={photoUrl} 
                             alt={user.name}
                             className="img-thumbnail"

@@ -77,7 +77,7 @@ class SinglePost extends Component {
             <img 
                 src={`${process.env.REACT_APP_API_URL}/${post.photo.data}?${new Date().getTime()}`} 
                 alt={post.title}
-                style={{height: '50vh', width: '100%', objectFit: 'cover'}}
+                style={{height: '50vh', width: '100%', objectFit: 'contain'}}
                 className="img-thumbnail"
             />
         ) : (
