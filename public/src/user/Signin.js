@@ -94,9 +94,9 @@ class Signin extends Component {
 
                 {this.signinForm(email, password)}
 
-                <hr />
+                {/* <hr />
                     <GoogleOAuthLogin />
-                <hr />
+                <hr /> */}
 
                 <p>
                     <Link to="/forgot-password" className="text-danger">
